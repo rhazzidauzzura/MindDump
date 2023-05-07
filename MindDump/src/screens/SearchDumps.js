@@ -1,24 +1,25 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
-import { FlatList, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, Text, TextInput, TouchableOpacity, View, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { CardTemp } from "../components/CardTemp";
-import { StyleSheet } from "react-native";
 
 export default Home = () => {
   const navigate = useNavigation();
   const isFocused = useIsFocused();
   const [gif, setGif] = useState([]);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
-    fetchData();
-  }, [isFocused]);
+    fetchData(search);
+  }, [isFocused, search]);
 
-  const fetchData = async () => {
+  const fetchData = async (search) => {
     try {
       let value = await AsyncStorage.getItem("Temps");
       value = JSON.parse(value) || [];
+      if (value && search) value = value.filter((el) => el.title.toLowerCase().includes(search.toLowerCase()));
       setGif(value);
     } catch (error) {
       console.log(error);
@@ -28,19 +29,16 @@ export default Home = () => {
     <View style={styles.container}>
       <View style={styles.content}>
         <View style={styles.header}>
-          <View style={{ flexDirection: "row" }}>
-            <Text style={{ fontWeight: 300, fontSize: 28 }}>Mind</Text>
-            <Text style={{ fontWeight: 700, fontSize: 28 }}>Dump</Text>
-          </View>
-          <Ionicons onPress={() => navigate.navigate("Search")} name="search" size={30} />
+          <TextInput style={styles.textInput} value={search} onChangeText={setSearch} placeholder="Search..." />
+          <Ionicons onPress={() => navigate.navigate("Home")} name="close" size={30} />
         </View>
         <View style={{ height: "75%", justifyContent: "center" }}>
           {gif.length <= 0 && (
             <Text style={{ left: 56 }}>
-              You Don't have a Mind<Text style={{ fontWeight: 600 }}>Dump</Text> data
+              You Don't have a Mind<Text style={{ fontWeight: 700 }}>Dump</Text> data
             </Text>
           )}
-          {gif.length > 0 && <FlatList columnWrapperStyle={{ justifyContent: "space-between" }} data={gif} renderItem={(item) => <CardTemp item={item} />} keyExtractor={(item, i) => i} numColumns={2} />}
+          {gif.length > 0 && <FlatList columnWrapperStyle={{ justifyContent: "space-between", margin: 3 }} data={gif} renderItem={(item) => <CardTemp item={item} />} keyExtractor={(item, i) => i} numColumns={2} />}
         </View>
       </View>
       <TouchableOpacity onPress={() => navigate.navigate("Gif")} style={styles.btn}>
@@ -52,13 +50,19 @@ export default Home = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "white",
     flex: 1,
+    backgroundColor: "white",
     position: "relative",
   },
   content: {
     height: "100%",
-    padding: 20,
+    padding: 10,
+  },
+  header: {
+    height: "15%",
+    alignItems: "center",
+    justifyContent: "space-between",
+    flexDirection: "row",
   },
   btn: {
     paddingVertical: 13,
@@ -74,10 +78,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: 800,
   },
-  header: {
-    height: "10%",
-    alignItems: "center",
-    justifyContent: "space-between",
-    flexDirection: "row",
+  textInput: {
+    height: 40,
+    padding: 10,
+    marginVertical: 15,
+    flex: 1,
   },
 });

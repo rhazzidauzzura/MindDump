@@ -1,7 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { CardGif } from "../components/CardGif";
 
@@ -9,7 +8,7 @@ export default function Card() {
   const navigate = useNavigation();
   const [gif, setGif] = useState([]);
   const [search, setSearch] = useState("");
-  const [selected, setSelected] = useState({});
+  const [select, setSelect] = useState({});
   const [loading, setLoading] = useState(false);
 
   const apiKey = "qM55fz5zq5VK2TzsddTzeL8F6qEX1kWY";
@@ -21,10 +20,12 @@ export default function Card() {
   const fetchData = async (q) => {
     setLoading(true);
     try {
-      const res = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q=${q || "sad"}&limit=25&offset=0&rating=g&lang=en`);
+      const res = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q=${q || "random"}&limit=25&offset=0&rating=g&lang=en`);
       const result = await res.json();
 
-      if (!res.ok) setGif([]);
+      if (!res.ok) {
+        setGif([]);
+      }
 
       setGif(result.data);
     } catch (error) {
@@ -35,7 +36,7 @@ export default function Card() {
   };
 
   const handleSelect = (item) => {
-    setSelected({
+    setSelect({
       id: item.item.id,
       title: item.item.title,
       gif: item.item.images.downsized_large.url,
@@ -43,14 +44,14 @@ export default function Card() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.content}>
         <View style={styles.header}>
           <View style={{ flexDirection: "row" }}>
-            <Text style={{ fontWeight: 400, fontSize: 25 }}>Create Mind</Text>
-            <Text style={{ fontWeight: 900, fontSize: 25 }}>Dump</Text>
+            <Text style={{ fontSize: 25, fontFamily: "Roboto" }}>Create Mind</Text>
+            <Text style={{ fontWeight: 900, fontSize: 25, fontFamily: "Roboto" }}>Dump</Text>
           </View>
-          <Ionicons onPress={() => navigate.goBack()} name="close" size={25} />
+          <Ionicons onPress={() => navigate.navigate("Home")} name="close" size={25} />
         </View>
         <View style={{ height: "95%" }}>
           <View>
@@ -63,8 +64,8 @@ export default function Card() {
               renderItem={(item) => (
                 <CardGif
                   item={item}
-                  selected={item.item.id === selected.id}
-                  onTap={() => {
+                  selected={item.item.id === select.id}
+                  onClick={() => {
                     handleSelect(item);
                   }}
                 />
@@ -75,16 +76,16 @@ export default function Card() {
           )}
           <TouchableOpacity
             onPress={() => {
-              navigate.navigate("Form", selected);
+              navigate.navigate("Form", select);
             }}
-            disabled={!selected.id}
-            style={{ padding: 10, marginTop: 10, borderRadius: 20, backgroundColor: "#ccff00", opacity: !selected.id ? 0.3 : 1 }}
+            disabled={!select.id}
+            style={{ ...styles.btn, opacity: !select.id ? 0.7 : 1 }}
           >
-            <Text style={{ textAlign: "center", fontWeight: 600 }}>Select a GIF</Text>
+            <Text style={styles.text}>Select a GIF</Text>
           </TouchableOpacity>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -95,10 +96,10 @@ const styles = StyleSheet.create({
   },
   content: {
     height: "100%",
-    padding: 25,
+    padding: 15,
   },
   header: {
-    height: "7%",
+    height: "6%",
     alignItems: "center",
     justifyContent: "space-between",
     flexDirection: "row",
@@ -107,6 +108,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#f2f2f2",
     height: 40,
     padding: 10,
+    borderRadius: 15,
     marginVertical: 15,
+  },
+  text: {
+    textAlign: "center",
+    fontFamily: "Roboto",
+    color: "white",
+  },
+  btn: {
+    padding: 10,
+    marginTop: 8,
+    borderRadius: 20,
+    backgroundColor: "gray",
   },
 });

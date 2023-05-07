@@ -1,9 +1,9 @@
 import { TouchableOpacity, Image } from "react-native";
 
-export default function CardGif({ item, onTap, selected }) {
+export function CardGif({ item, onClick, selected }) {
   return (
     <TouchableOpacity
-      onPress={onTap}
+      onPress={onClick}
       style={{
         width: "50%",
         maxWidth: "50%",
@@ -11,7 +11,7 @@ export default function CardGif({ item, onTap, selected }) {
       }}
     >
       <Image
-        style={{ width: "98%", height: "99%", opacity: selected ? 0.5 : 1 }}
+        style={{ width: "97%", height: "99%", opacity: selected ? 0.3 : 1 }}
         source={{
           uri: item.item.images.downsized_large.url,
         }}

@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { TouchableOpacity, View, Image, Text, StyleSheet } from "react-native";
 
-export const CardDump = ({ item }) => {
+export const CardTemp = ({ item }) => {
   const navigate = useNavigation();
 
   return (
@@ -32,12 +32,20 @@ const styles = StyleSheet.create({
     width: "49%",
     maxWidth: "50%",
     minHeight: 70,
-    borderRadius: 10,
-    borderColor: "#d9d9d9",
+    borderRadius: 8,
+    borderColor: "#eaeaea",
     borderWidth: 1,
     overflow: "hidden",
+    marginBottom: 7,
   },
-  container: { padding: 10 },
-  title: { fontSize: 20 },
-  desc: { fontSize: 10, color: "#bababa" },
+  container: {
+    padding: 10,
+  },
+  title: {
+    fontSize: 17,
+  },
+  desc: {
+    fontSize: 12,
+    color: "#bababa",
+  },
 });
